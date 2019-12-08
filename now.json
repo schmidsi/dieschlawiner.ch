@@ -1,6 +1,3 @@
 {
-  "version": 2,
-  "env": {
-    "TEST": "@TEST"
-  }
+  "version": 2
 }
