@@ -1,7 +1,11 @@
 import Head from 'next/head';
 import { useFormik } from 'formik';
+import { useApolloClient } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 const Home = () => {
+  const apolloClient = useApolloClient();
+
   const formik = useFormik({
     initialValues: {
       code: '',
@@ -9,7 +13,34 @@ const Home = () => {
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
     },
+    validate: async values => {
+      if (values.code.length === 6) {
+        const result = await apolloClient.query({
+          query: gql`
+            query IsValidCode($code: String) {
+              isValidCode(code: $code)
+            }
+          `,
+          variables: {
+            code: values.code,
+          },
+          fetchPolicy: 'no-cache',
+        });
+
+        console.log(result);
+
+        if (result.data.isValidCode) {
+          formik.submitForm();
+        } else {
+          return {
+            errors: { code: 'Falscher code' },
+          };
+        }
+      }
+    },
   });
+
+  // console.log(formik);
 
   return (
     <div className="root">
@@ -24,6 +55,7 @@ const Home = () => {
           type="string"
           onChange={formik.handleChange}
           value={formik.values.code}
+          maxLength={6}
         />
         <button type="submit">Submit</button>
       </form>
