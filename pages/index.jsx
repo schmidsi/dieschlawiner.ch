@@ -1,11 +1,32 @@
 import Head from 'next/head';
+import { useFormik } from 'formik';
 
 const Home = () => {
+  const formik = useFormik({
+    initialValues: {
+      code: '',
+    },
+    onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
+
   return (
     <div className="root">
       <Head>
         <title>Schlawiner</title>
       </Head>
+      <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="email">Code</label>
+        <input
+          id="code"
+          name="code"
+          type="string"
+          onChange={formik.handleChange}
+          value={formik.values.code}
+        />
+        <button type="submit">Submit</button>
+      </form>
       <style jsx global>{`
         html,
         body {
@@ -18,10 +39,7 @@ const Home = () => {
           background-size: 50%;
         }
       `}</style>
-      <style jsx>{`
-        .root {
-        }
-      `}</style>
+      <style jsx>{``}</style>
     </div>
   );
 };
