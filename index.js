@@ -1,6 +1,8 @@
 const fs = require('fs');
 const readline = require('readline');
-const {google} = require('googleapis');
+const { google } = require('googleapis');
+
+const ALLOWED_CHARS = 'abcdefghkmnpqrstuvwxyz23456789';
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
@@ -13,7 +15,7 @@ const TOKEN_PATH = 'token.json';
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
   // Authorize a client with credentials, then call the Google Sheets API.
-  authorize(JSON.parse(content), appendCodes);  // listMajors
+  authorize(JSON.parse(content), appendCodes); // listMajors
 });
 
 /**
@@ -23,9 +25,12 @@ fs.readFile('credentials.json', (err, content) => {
  * @param {function} callback The callback to call with the authorized client.
  */
 function authorize(credentials, callback) {
-  const {client_secret, client_id, redirect_uris} = credentials.installed;
+  const { client_secret, client_id, redirect_uris } = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
+    client_id,
+    client_secret,
+    redirect_uris[0],
+  );
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
@@ -51,13 +56,17 @@ function getNewToken(oAuth2Client, callback) {
     input: process.stdin,
     output: process.stdout,
   });
-  rl.question('Enter the code from that page here: ', (code) => {
+  rl.question('Enter the code from that page here: ', code => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error while trying to retrieve access token', err);
+      if (err)
+        return console.error(
+          'Error while trying to retrieve access token',
+          err,
+        );
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), err => {
         if (err) return console.error(err);
         console.log('Token stored to', TOKEN_PATH);
       });
@@ -66,40 +75,32 @@ function getNewToken(oAuth2Client, callback) {
   });
 }
 
-/**
- * Prints the names and majors of students in a sample spreadsheet:
- * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
- * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
- */
-function listMajors(auth) {
-  const sheets = google.sheets({version: 'v4', auth});
-  sheets.spreadsheets.values.get({
-    spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-    range: 'A2:E',
-  }, (err, res) => {
-    if (err) return console.log('The API returned an error: ' + err);
-    const rows = res.data.values;
-    if (rows.length) {
-      console.log('Name, Major:');
-      // Print columns A and E, which correspond to indices 0 and 4.
-      rows.map((row) => {
-        console.log(`${row[0]}, ${row[4]}`);
-      });
-    } else {
-      console.log('No data found.');
-    }
-  });
-}
+const onlyUnique = (value, index, self) => self.indexOf(value) === index;
 
-const appendCodes = async (auth) => {
-  const sheets = google.sheets({version: 'v4', auth});
+const isUnique = arr => arr.filter(onlyUnique).length === arr.length;
+
+const appendCodes = async auth => {
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  const randomCode = () =>
+    new Array(6)
+      .fill()
+      .map(
+        () =>
+          ALLOWED_CHARS[Math.round(Math.random() * (ALLOWED_CHARS.length - 1))],
+      )
+      .join('');
+
+  const values = new Array(1000).fill().map(() => [randomCode()]);
+
+  // console.log(values.flat(), isUnique(values.flat()));
 
   const result = await sheets.spreadsheets.values.append({
     spreadsheetId: '1LW3jwZED2ivelmt-VqrweqbEH3mN-okbLGQjO5X_qmE',
     range: 'A:A',
     valueInputOption: 'RAW',
-    resource: { values: [['asdf'], ['qwer']] }
-  })
+    resource: { values },
+  });
 
-  console.log(result);
-}
+  // console.log(randomCode, Math.random() * ALLOWED_CHARS.length);
+};
