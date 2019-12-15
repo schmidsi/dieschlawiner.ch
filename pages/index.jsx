@@ -47,25 +47,50 @@ const Home = () => {
       <Head>
         <title>Schlawiner</title>
       </Head>
-      <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="email">Code</label>
-        <input
-          id="code"
-          name="code"
-          type="string"
-          onChange={formik.handleChange}
-          value={formik.values.code}
-          maxLength={6}
-        />
-        <button type="submit">Submit</button>
-      </form>
+      <div className="cursor">
+        <form onSubmit={formik.handleSubmit}>
+          <label htmlFor="email">Code</label>
+          <input
+            id="code"
+            name="code"
+            type="string"
+            onChange={formik.handleChange}
+            value={formik.values.code}
+            maxLength={6}
+          />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      //
       <style jsx global>{`
-        html,
-        body {
+        .cursor {
+          height: 100px;
+          width: 100px;
+        }
+
+        html {
+          padding: 0;
+          margin: 0;
           width: 100%;
+          height: 100%;
+          background-color: #ff0000;
+        }
+
+        * {
+          cursor: url('/cursor.png'), auto;
+        }
+
+        input,
+        button,
+        a {
+          cursor: url('/cursor_hover.png'), auto;
+        }
+
+        body {
+          padding: 0;
+          margin: 0;
           min-height: 100%;
-          background-color: #fe0000;
-          background-image: url('/bg.jpg');
+
           background-position: center center;
           background-repeat: no-repeat;
           background-size: 50%;
