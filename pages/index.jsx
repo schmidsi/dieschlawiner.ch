@@ -14,9 +14,10 @@ const Home = () => {
 
   const formik = useFormik({
     initialValues: {
-      code: 'asdf12',
+      code: 'r7qkev',
     },
     onSubmit: values => {
+      console.log('onsubmit');
       setCode(values.code);
       Router.push('/form');
     },
@@ -34,7 +35,7 @@ const Home = () => {
           fetchPolicy: 'no-cache',
         });
 
-        if (result.data.isValidCode) {
+        if (result.data.isValidCode && !code) {
           formik.submitForm();
         } else {
           return { code: 'Falscher code' };
