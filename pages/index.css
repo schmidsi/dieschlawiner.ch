@@ -1,0 +1,35 @@
+.logo-holder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+img {
+  width: 60%;
+  margin-bottom: 75px;
+}
+.pw {
+  background-image: url('/pw.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pw input {
+  margin-top: -10px;
+  padding: 0;
+  margin-left: 60px;
+  /*border: 1px solid black;*/
+  border: none;
+  background-color: transparent;
+  font-size: 30px;
+  font-family: 'Courier Prime', monospace;
+  width: 140px;
+  letter-spacing: 5px;
+}
+
+.pw input:focus {
+  outline: none;
+}

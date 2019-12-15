@@ -6,6 +6,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import { CodeContext } from './_app';
+import styles from './index.css';
 
 const Home = () => {
   const apolloClient = useApolloClient();
@@ -68,110 +69,7 @@ const Home = () => {
         </label>
       </form>
 
-      <style jsx>{`
-        .logo-holder {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        img {
-          width: 60%;
-          margin-bottom: 75px;
-        }
-        .pw {
-          background-image: url('/pw.png');
-          background-position: center center;
-          background-repeat: no-repeat;
-          background-size: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .pw input {
-          margin-top: -10px;
-          padding: 0;
-          margin-left: 60px;
-          /*border: 1px solid black;*/
-          border: none;
-          background-color: transparent;
-          font-size: 30px;
-          font-family: 'Courier Prime', monospace;
-          width: 140px;
-          letter-spacing: 5px;
-        }
-
-        .pw input:focus {
-          outline: none;
-        }
-      `}</style>
-
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css?family=Courier+Prime&display=swap');
-
-        html {
-          padding: 0;
-          margin: 0;
-          width: 100%;
-          height: 100%;
-          background-color: #ff0000;
-        }
-
-        img {
-          max-width: 100%;
-        }
-
-        * {
-          cursor: url('/cursor.png'), auto;
-        }
-
-        input,
-        button,
-        a {
-          cursor: url('/cursor_hover.png'), auto;
-        }
-
-        body {
-          padding: 0;
-          margin: 0;
-          min-height: 100%;
-
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        @keyframes shake {
-          from,
-          to {
-            transform: translate3d(0, 0, 0);
-          }
-
-          10%,
-          30%,
-          50%,
-          70%,
-          90% {
-            transform: translate3d(-10px, 0, 0);
-          }
-
-          20%,
-          40%,
-          60%,
-          80% {
-            transform: translate3d(10px, 0, 0);
-          }
-        }
-
-        .animated {
-          animation-duration: 0.5s;
-          animation-fill-mode: both;
-        }
-
-        .shake {
-          animation-name: shake;
-        }
-      `}</style>
+      <style jsx>{styles}</style>
     </div>
   );
 };

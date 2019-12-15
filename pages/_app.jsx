@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import App from 'next/app';
+import Head from 'next/head';
 
 import withData from '../lib/withData';
+
+import styles from './_app.css?type=global';
 
 export const CodeContext = React.createContext({ code: '', setCode: () => {} });
 
@@ -20,6 +23,17 @@ class MyApp extends App {
     const { Component, pageProps } = this.props;
     return (
       <CodeContextWrapper>
+        <Head>
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="96x96"
+            href="/favicon-96x96.png"
+          />
+        </Head>
+        <style jsx global>
+          {styles}
+        </style>
         <Component {...pageProps} />
       </CodeContextWrapper>
     );
