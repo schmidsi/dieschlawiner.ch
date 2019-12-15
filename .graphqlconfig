@@ -1,6 +1,6 @@
 {
   "projects": {
-    "schlawiner.ch": {
+    "dieschlawiner.ch": {
       "schemaPath": "pages/api/schema.graphql",
       "extensions": {
         "endpoints": {

@@ -1,18 +1,23 @@
-// import { useState } from 'react';
+import { useContext } from 'react';
 import Head from 'next/head';
+import Router from 'next/router';
 import { useFormik } from 'formik';
 import { useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
+import { CodeContext } from './_app';
+
 const Home = () => {
   const apolloClient = useApolloClient();
+  const { code, setCode } = useContext(CodeContext);
 
   const formik = useFormik({
     initialValues: {
       code: 'asdf12',
     },
     onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+      setCode(values.code);
+      Router.push('/form');
     },
     validate: async values => {
       if (values.code.length === 6) {
@@ -28,8 +33,6 @@ const Home = () => {
           fetchPolicy: 'no-cache',
         });
 
-        // console.log({ formik });
-
         if (result.data.isValidCode) {
           formik.submitForm();
         } else {
@@ -38,10 +41,6 @@ const Home = () => {
       }
     },
   });
-
-  console.log(formik.errors);
-
-  if (formik.errors) console.log(formik);
 
   return (
     <div className="root">
@@ -165,9 +164,7 @@ const Home = () => {
         }
 
         .animated {
-          -webkit-animation-duration: 1s;
-          animation-duration: 1s;
-          -webkit-animation-fill-mode: both;
+          animation-duration: 0.5s;
           animation-fill-mode: both;
         }
 
