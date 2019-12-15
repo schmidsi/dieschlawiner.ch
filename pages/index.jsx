@@ -8,7 +8,7 @@ const Home = () => {
 
   const formik = useFormik({
     initialValues: {
-      code: '',
+      code: 'asdf12',
     },
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
@@ -47,10 +47,15 @@ const Home = () => {
       <Head>
         <title>Schlawiner</title>
       </Head>
-      <div className="cursor">
-        <form onSubmit={formik.handleSubmit}>
-          <label htmlFor="email">Code</label>
+
+      <div className="logo-holder">
+        <img src="/logo.png" />
+      </div>
+
+      <form onSubmit={formik.handleSubmit}>
+        <label htmlFor="code" className="pw">
           <input
+            autoComplete="off"
             id="code"
             name="code"
             type="string"
@@ -58,15 +63,45 @@ const Home = () => {
             value={formik.values.code}
             maxLength={6}
           />
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-      //
-      <style jsx global>{`
-        .cursor {
-          height: 100px;
-          width: 100px;
+        </label>
+      </form>
+
+      <style jsx>{`
+        .logo-holder {
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
+        img {
+          width: 60%;
+          margin-bottom: 75px;
+        }
+        .pw {
+          background-image: url('/pw.png');
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .pw input {
+          margin-top: -10px;
+          padding: 0;
+          margin-left: 60px;
+          /*border: 1px solid black;*/
+          border: none;
+          background-color: transparent;
+          font-size: 30px;
+          font-family: 'Courier Prime', monospace;
+          width: 140px;
+          letter-spacing: 5px;
+        }
+      `}</style>
+
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css?family=Courier+Prime&display=swap');
 
         html {
           padding: 0;
@@ -74,6 +109,10 @@ const Home = () => {
           width: 100%;
           height: 100%;
           background-color: #ff0000;
+        }
+
+        img {
+          max-width: 100%;
         }
 
         * {
@@ -91,12 +130,11 @@ const Home = () => {
           margin: 0;
           min-height: 100%;
 
-          background-position: center center;
-          background-repeat: no-repeat;
-          background-size: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
       `}</style>
-      <style jsx>{``}</style>
     </div>
   );
 };
