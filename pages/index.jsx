@@ -1,3 +1,4 @@
+// import { useState } from 'react';
 import Head from 'next/head';
 import { useFormik } from 'formik';
 import { useApolloClient } from '@apollo/react-hooks';
@@ -27,20 +28,20 @@ const Home = () => {
           fetchPolicy: 'no-cache',
         });
 
-        console.log(result);
+        // console.log({ formik });
 
         if (result.data.isValidCode) {
           formik.submitForm();
         } else {
-          return {
-            errors: { code: 'Falscher code' },
-          };
+          return { code: 'Falscher code' };
         }
       }
     },
   });
 
-  // console.log(formik);
+  console.log(formik.errors);
+
+  if (formik.errors) console.log(formik);
 
   return (
     <div className="root">
@@ -48,11 +49,13 @@ const Home = () => {
         <title>Schlawiner</title>
       </Head>
 
-      <div className="logo-holder">
-        <img src="/logo.png" />
-      </div>
-
-      <form onSubmit={formik.handleSubmit}>
+      <form
+        onSubmit={formik.handleSubmit}
+        className={formik.errors.code && 'animated shake'}
+      >
+        <div className="logo-holder">
+          <img src="/logo.png" />
+        </div>
         <label htmlFor="code" className="pw">
           <input
             autoComplete="off"
@@ -98,6 +101,10 @@ const Home = () => {
           width: 140px;
           letter-spacing: 5px;
         }
+
+        .pw input:focus {
+          outline: none;
+        }
       `}</style>
 
       <style jsx global>{`
@@ -133,6 +140,39 @@ const Home = () => {
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+
+        @keyframes shake {
+          from,
+          to {
+            transform: translate3d(0, 0, 0);
+          }
+
+          10%,
+          30%,
+          50%,
+          70%,
+          90% {
+            transform: translate3d(-10px, 0, 0);
+          }
+
+          20%,
+          40%,
+          60%,
+          80% {
+            transform: translate3d(10px, 0, 0);
+          }
+        }
+
+        .animated {
+          -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+          -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+        }
+
+        .shake {
+          animation-name: shake;
         }
       `}</style>
     </div>
