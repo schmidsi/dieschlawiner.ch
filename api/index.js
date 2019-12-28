@@ -1,5 +1,6 @@
-import { ApolloServer, gql } from 'apollo-server-micro';
+import { ApolloServer, gql, makeExecutableSchema } from 'apollo-server-micro';
 import { google } from 'googleapis';
+import ConstraintDirective from 'graphql-constraint-directive';
 
 const CACHE_TIMEOUT = 100 * 1000;
 
@@ -43,8 +44,13 @@ const getEntries = async forceRefetch => {
       index === 0
         ? acc
         : [
-            Object.fromEntries(self[0].map((key, i) => [key.trim(), curr[i]])),
             ...acc,
+            {
+              row: index + 1,
+              ...Object.fromEntries(
+                self[0].map((key, i) => [key.trim(), curr[i]]),
+              ),
+            },
           ],
     [],
   );
@@ -58,10 +64,45 @@ const getEntries = async forceRefetch => {
 };
 
 const typeDefs = gql`
+  scalar ConstraintString
+  scalar ConstraintNumber
+
+  directive @constraint(
+    # String constraints
+    minLength: Int
+    maxLength: Int
+    startsWith: String
+    endsWith: String
+    notContains: String
+    pattern: String
+    format: String
+
+    # Number constraints
+    min: Int
+    max: Int
+    exclusiveMin: Int
+    exclusiveMax: Int
+    multipleOf: Int
+  ) on INPUT_FIELD_DEFINITION
+
   type Query {
-    isValidCode(code: String): Boolean
-    greeting(code: String): String
+    isValidCode(code: String!): Boolean
+    greeting(code: String!): String
     test: String
+  }
+
+  type Mutation {
+    register(code: String!, input: RegisterInput!): Boolean
+  }
+
+  input RegisterInput {
+    vorname: String! @constraint(maxLength: 30)
+    nachname: String! @constraint(maxLength: 30)
+    adresse: String! @constraint(maxLength: 30)
+    plz: String! @constraint(pattern: "^[0-9]{4,6}$")
+    ort: String! @constraint(maxLength: 30)
+    mobile: String! @constraint(maxLength: 30)
+    email: String! @constraint(format: "email")
   }
 `;
 
@@ -86,8 +127,29 @@ const resolvers = {
       return '';
     },
   },
+  Mutation: {
+    async register(_, { code, input }) {
+      const entries = await getEntries();
+
+      console.log(code, input, entries);
+
+      return true;
+    },
+  },
 };
 
-const apolloServer = new ApolloServer({ typeDefs, resolvers });
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers,
+  schemaDirectives: { constraint: ConstraintDirective },
+});
+
+const apolloServer = new ApolloServer({
+  schema,
+  formatError: error => {
+    console.log(error);
+    return error;
+  },
+});
 
 export default apolloServer;

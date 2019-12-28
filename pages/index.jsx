@@ -24,7 +24,7 @@ const Home = () => {
       if (values.code.length === 6) {
         const result = await apolloClient.query({
           query: gql`
-            query IsValidCode($code: String) {
+            query IsValidCode($code: String!) {
               isValidCode(code: $code)
             }
           `,
