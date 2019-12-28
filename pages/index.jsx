@@ -14,7 +14,7 @@ const Home = () => {
 
   const formik = useFormik({
     initialValues: {
-      code: process.env.NODE_ENV === 'development' && 'r7qkev',
+      code: process.env.NODE_ENV === 'development' ? 'r7qkev' : '',
     },
     onSubmit: values => {
       setCode(values.code);
