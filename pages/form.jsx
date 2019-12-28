@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
@@ -11,6 +11,14 @@ const Form = () => {
   const router = useRouter();
 
   const { code } = useContext(CodeContext);
+  const { data: { greeting } = {} } = useQuery(
+    gql`
+      query Greeting($code: String!) {
+        greeting(code: $code)
+      }
+    `,
+    { variables: { code } },
+  );
 
   if (process.browser && !code) {
     router.push('/');
@@ -54,6 +62,7 @@ const Form = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <img src="/form-header.png" />
+      {greeting && <h2>{greeting}</h2>}
       {Object.entries(formik.values).map(([name, value]) => (
         <input
           type="string"
@@ -74,15 +83,27 @@ const Form = () => {
           padding: 10px;
         }
 
+        img {
+          margin-bottom: 20px;
+        }
+
+        h2 {
+          margin: 30px 20px;
+          font-family: Helvetica, sans-serif;
+          font-weight: bold;
+        }
+
         input {
           box-sizing: border-box;
           display: block;
           width: calc(100% - 40px);
           background-color: #ebebeb;
           border: none;
-          font-size: 20px;
+          font-size: 18px;
           margin: 10px 20px;
-          padding: 10px;
+          padding: 13px;
+          font-family: Helvetica, sans-serif;
+          font-weight: bold;
         }
 
         button {
