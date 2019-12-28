@@ -135,6 +135,7 @@ const typeDefs = gql`
     ort: String! @constraint(maxLength: 30)
     mobile: String! @constraint(maxLength: 30)
     email: String! @constraint(format: "email")
+    eingeladen_von: String!
   }
 `;
 

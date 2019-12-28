@@ -34,6 +34,7 @@ const Form = () => {
       ort: process.env.NODE_ENV === 'development' ? 'Zürich' : '',
       mobile: process.env.NODE_ENV === 'development' ? '0791234567' : '',
       email: process.env.NODE_ENV === 'development' ? 'hans@muster.ch' : '',
+      eingeladen_von: process.env.NODE_ENV === 'development' ? 'Hans' : '',
     },
     validationSchema: Yup.object({
       vorname: Yup.string().required('Required'),
@@ -45,6 +46,7 @@ const Form = () => {
       email: Yup.string()
         .email('Invalid email address')
         .required('Required'),
+      eingeladen_von: Yup.string().required('Required'),
     }),
     onSubmit: async values => {
       try {
@@ -82,7 +84,7 @@ const Form = () => {
           type="string"
           key={name}
           name={name}
-          placeholder={name}
+          placeholder={name.replace('_', ' ')}
           onChange={formik.handleChange}
           value={value}
           className={formik.errors[name] && 'error'}
