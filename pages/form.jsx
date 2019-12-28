@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import gql from 'graphql-tag';
+import * as Yup from 'yup';
 
 import { CodeContext } from './_app';
 
@@ -34,6 +35,17 @@ const Form = () => {
       mobile: process.env.NODE_ENV === 'development' ? '0791234567' : '',
       email: process.env.NODE_ENV === 'development' ? 'hans@muster.ch' : '',
     },
+    validationSchema: Yup.object({
+      vorname: Yup.string().required('Required'),
+      nachname: Yup.string().required('Required'),
+      adresse: Yup.string().required('Required'),
+      plz: Yup.string().required('Required'),
+      ort: Yup.string().required('Required'),
+      mobile: Yup.string().required('Required'),
+      email: Yup.string()
+        .email('Invalid email address')
+        .required('Required'),
+    }),
     onSubmit: async values => {
       try {
         const result = await apolloClient.mutate({
@@ -59,6 +71,8 @@ const Form = () => {
     },
   });
 
+  console.log(formik);
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <img src="/form-header.png" />
@@ -71,6 +85,7 @@ const Form = () => {
           placeholder={name}
           onChange={formik.handleChange}
           value={value}
+          className={formik.errors[name] && 'error'}
         />
       ))}
       <button
@@ -104,6 +119,10 @@ const Form = () => {
           padding: 13px;
           font-family: Helvetica, sans-serif;
           font-weight: bold;
+        }
+
+        input.error {
+          background-color: #ffd4d4;
         }
 
         button {
