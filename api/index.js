@@ -1,6 +1,7 @@
 import { ApolloServer, gql, makeExecutableSchema } from 'apollo-server-micro';
 import { google } from 'googleapis';
 import ConstraintDirective from 'graphql-constraint-directive';
+import requestIp from 'request-ip';
 
 const CACHE_TIMEOUT = 100 * 1000;
 
@@ -159,7 +160,7 @@ const resolvers = {
     },
   },
   Mutation: {
-    async register(_, { code, input }) {
+    async register(_, { code, input }, context) {
       const entries = await getEntries();
 
       const entry = entries.find(e => e['code'] === code.trim().toLowerCase());
@@ -172,6 +173,8 @@ const resolvers = {
         ...entry,
         ...input,
         timestamp: new Date(),
+        ip: context.remoteAddress,
+        browser: context.userAgent,
       };
 
       const values = [objectToCols(await getNamedCols(), combinedInput)];
@@ -201,6 +204,12 @@ const apolloServer = new ApolloServer({
   formatError: error => {
     console.log(error);
     return error;
+  },
+  context: ({ req }) => {
+    return {
+      remoteAddress: requestIp.getClientIp(req),
+      userAgent: req.headers['user-agent'],
+    };
   },
 });
 

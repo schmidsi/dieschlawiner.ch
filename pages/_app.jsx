@@ -24,6 +24,7 @@ class MyApp extends App {
     return (
       <CodeContextWrapper>
         <Head>
+          <title>Die Schlawiner</title>
           <link
             rel="icon"
             type="image/png"
