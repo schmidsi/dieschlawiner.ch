@@ -34,9 +34,8 @@ const getEntries = async forceRefetch => {
   }
 
   const result = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1LW3jwZED2ivelmt-VqrweqbEH3mN-okbLGQjO5X_qmE',
+    spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
     range: 'A:Z',
-    auth,
   });
 
   const entries = result.data.values.reduce(
@@ -62,6 +61,38 @@ const getEntries = async forceRefetch => {
 
   return entries;
 };
+
+const getNamedCols = async forceRefetch => {
+  const now = new Date();
+
+  if (
+    !forceRefetch &&
+    cache.namedCols &&
+    now - cache.namedCols.timestamp < CACHE_TIMEOUT
+  ) {
+    return cache.namedCols.data;
+  }
+
+  const result = await sheets.spreadsheets.values.get({
+    spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
+    range: '1:1',
+  });
+
+  const namedCols = result.data.values[0].map((value, index) => ({
+    value: value.trim(),
+    index,
+  }));
+
+  cache.namedCols = {
+    timestamp: new Date(),
+    data: namedCols,
+  };
+
+  return namedCols;
+};
+
+const objectToCols = (namedCols, obj) =>
+  namedCols.map(({ value, index }) => obj[value]);
 
 const typeDefs = gql`
   scalar ConstraintString
@@ -116,7 +147,7 @@ const resolvers = {
 
       const entry = entries.find(e => e['code'] === code.trim().toLowerCase());
 
-      return !!(entry && !entry['Timestamp']);
+      return !!(entry && !entry['timestamp']);
     },
     async greeting(_, { code }) {
       const entries = await getEntries();
@@ -131,7 +162,26 @@ const resolvers = {
     async register(_, { code, input }) {
       const entries = await getEntries();
 
-      console.log(code, input, entries);
+      const entry = entries.find(e => e['code'] === code.trim().toLowerCase());
+
+      if (!entry || entry['timestamp']) return false;
+
+      const fields = Object.keys(entry);
+
+      const combinedInput = {
+        ...entry,
+        ...input,
+        timestamp: new Date(),
+      };
+
+      const values = [objectToCols(await getNamedCols(), combinedInput)];
+
+      const result = await sheets.spreadsheets.values.update({
+        spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
+        range: `${entry.row}:4${entry.row}`,
+        valueInputOption: 'RAW',
+        resource: { values },
+      });
 
       return true;
     },
