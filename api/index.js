@@ -183,6 +183,8 @@ const resolvers = {
         resource: { values },
       });
 
+      cache.entries.timestamp = new Date(0);
+
       return true;
     },
   },

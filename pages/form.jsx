@@ -40,7 +40,11 @@ const Form = () => {
           },
         });
 
-        console.log(result);
+        if (result.data.register) {
+          router.push('/congrats');
+        } else {
+          router.push('/');
+        }
       } catch (error) {
         console.warn(error);
       }
