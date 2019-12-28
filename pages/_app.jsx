@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import App from 'next/app';
 import Head from 'next/head';
+import * as Sentry from '@sentry/browser';
 
 import withData from '../lib/withData';
 
 import styles from './_app.css?type=global';
+
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn: 'https://7ff1270109f14669bfe2edbec0529457@sentry.io/1477328',
+  });
+}
 
 export const CodeContext = React.createContext({ code: '', setCode: () => {} });
 

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import gql from 'graphql-tag';
 import * as Yup from 'yup';
+import * as Sentry from '@sentry/browser';
 
 import { CodeContext } from './_app';
 
@@ -69,11 +70,10 @@ const Form = () => {
         }
       } catch (error) {
         console.warn(error);
+        Sentry.captureException(error);
       }
     },
   });
-
-  console.log(formik);
 
   return (
     <form onSubmit={formik.handleSubmit}>

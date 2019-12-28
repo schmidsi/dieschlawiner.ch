@@ -7,6 +7,7 @@
     "GOOGLE_ACCESS_TOKEN": "@google_access_token",
     "GOOGLE_REFRESH_TOKEN": "@google_refresh_token",
     "GOOGLE_TOKEN_EXPIRY_DATE": "@google_token_expiry_date",
-    "GOOGLE_SPREADSHEET_ID": "@google_spreadsheet_id"
+    "GOOGLE_SPREADSHEET_ID": "@google_spreadsheet_id",
+    "SENTRY_PUBLIC_DSN": "@sentry_public_dsn"
   }
 }

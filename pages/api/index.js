@@ -2,6 +2,11 @@ import { ApolloServer, gql, makeExecutableSchema } from 'apollo-server-micro';
 import { google } from 'googleapis';
 import ConstraintDirective from 'graphql-constraint-directive';
 import requestIp from 'request-ip';
+import * as Sentry from '@sentry/node';
+
+Sentry.init({
+  dsn: 'https://b0d9b746ebe34047a0d56e9ece1256b8@sentry.io/1867852',
+});
 
 const CACHE_TIMEOUT = 100 * 1000;
 
@@ -182,7 +187,7 @@ const resolvers = {
 
       const result = await sheets.spreadsheets.values.update({
         spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-        range: `${entry.row}:4${entry.row}`,
+        range: `${entry.row}:${entry.row}`,
         valueInputOption: 'RAW',
         resource: { values },
       });
