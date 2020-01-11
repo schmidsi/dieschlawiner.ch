@@ -4,6 +4,7 @@ import Router from 'next/router';
 import { useFormik } from 'formik';
 import { useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import PacmanLoader from 'react-spinners/PacmanLoader';
 
 import { CodeContext } from './_app';
 import styles from './index.css';
@@ -56,17 +57,27 @@ const Home = () => {
         <div className="logo-holder">
           <img src="/logo.png" />
         </div>
-        <label htmlFor="code" className="pw">
-          <input
-            autoComplete="off"
-            id="code"
-            name="code"
-            type="string"
-            onChange={formik.handleChange}
-            value={formik.values.code}
-            maxLength={6}
-          />
-        </label>
+        {/* {true ? ( */}
+        {formik.isSubmitting ? (
+          <div className="loader">
+            <div>
+              <PacmanLoader />
+            </div>
+          </div>
+        ) : (
+          <label htmlFor="code" className="pw">
+            <input
+              disabled={formik.isSubmitting}
+              autoComplete="off"
+              id="code"
+              name="code"
+              type="string"
+              onChange={formik.handleChange}
+              value={formik.values.code}
+              maxLength={6}
+            />
+          </label>
+        )}
       </form>
 
       <style jsx>{styles}</style>

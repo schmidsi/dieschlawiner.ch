@@ -77,7 +77,7 @@ const Form = () => {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <img src="/form-header.png" />
+      <img src="/form-header.jpg" />
       {greeting && <h2>{greeting}</h2>}
       {Object.entries(formik.values).map(([name, value]) => (
         <input

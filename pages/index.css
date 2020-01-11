@@ -37,3 +37,9 @@ img {
 .pw input:focus {
   outline: none;
 }
+
+.loader {
+  display: flex;
+  justify-content: center;
+  margin-left: -6em;
+}

@@ -8,7 +8,7 @@ Sentry.init({
   dsn: 'https://b0d9b746ebe34047a0d56e9ece1256b8@sentry.io/1867852',
 });
 
-const CACHE_TIMEOUT = 100 * 1000;
+const CACHE_TIMEOUT = 10 * 1000;
 
 const cache = {};
 
@@ -153,6 +153,8 @@ const resolvers = {
       const entries = await getEntries();
 
       const entry = entries.find(e => e['code'] === code.trim().toLowerCase());
+
+      // await new Promise(resolve => setTimeout(resolve, 10000));
 
       return !!(entry && !entry['timestamp']);
     },
