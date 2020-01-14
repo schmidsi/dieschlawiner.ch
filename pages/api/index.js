@@ -154,7 +154,7 @@ const resolvers = {
 
       const entry = entries.find(e => e['code'] === code.trim().toLowerCase());
 
-      // await new Promise(resolve => setTimeout(resolve, 10000));
+      // await new Promise(resolve => setTimeout(resolve, 1000));
 
       return !!(entry && !entry['timestamp']);
     },

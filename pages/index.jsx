@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
 import { useFormik } from 'formik';
@@ -12,6 +12,7 @@ import styles from './index.css';
 const Home = () => {
   const apolloClient = useApolloClient();
   const { code, setCode } = useContext(CodeContext);
+  const [isValidating, setIsValidating] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -23,6 +24,8 @@ const Home = () => {
     },
     validate: async values => {
       if (values.code.length === 6) {
+        setIsValidating(true);
+
         const result = await apolloClient.query({
           query: gql`
             query IsValidCode($code: String!) {
@@ -34,6 +37,8 @@ const Home = () => {
           },
           fetchPolicy: 'no-cache',
         });
+
+        setIsValidating(false);
 
         if (result.data.isValidCode && !code) {
           formik.submitForm();
@@ -58,7 +63,7 @@ const Home = () => {
           <img src="/logo.png" />
         </div>
         {/* {true ? ( */}
-        {formik.isSubmitting ? (
+        {formik.isSubmitting || isValidating ? (
           <div className="loader">
             <div>
               <PacmanLoader />
