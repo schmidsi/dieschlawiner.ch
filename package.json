@@ -17,7 +17,7 @@
     "@sentry/node": "^5.10.2",
     "apollo-boost": "^0.4.4",
     "apollo-link-http": "^1.5.16",
-    "apollo-server-micro": "^2.9.13",
+    "apollo-server-micro": "^2.14.2",
     "dotenv": "^8.2.0",
     "formik": "^2.0.6",
     "googleapis": "^39.2.0",
