@@ -12,23 +12,19 @@ const CACHE_TIMEOUT = 10 * 1000;
 
 const cache = {};
 
-const auth = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI,
-);
+const auth = new google.auth.JWT({
+  email: process.env.GOOGLE_CLIENT_EMAIL,
+  key: process.env.GOOGLE_PRIVATE_KEY,
+  scopes: 'https://www.googleapis.com/auth/spreadsheets',
+});
 
-auth.setCredentials({
-  access_token: process.env.GOOGLE_ACCESS_TOKEN,
-  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-  expiry_date: process.env.GOOGLE_TOKEN_EXPIRY_DATE,
-  scope: 'https://www.googleapis.com/auth/spreadsheets',
-  token_type: 'Bearer',
+auth.authorize((err, result) => {
+  console.log({ err, result });
 });
 
 const sheets = google.sheets({ version: 'v4', auth });
 
-const getEntries = async forceRefetch => {
+const getEntries = async (forceRefetch) => {
   const now = new Date();
 
   if (
@@ -68,7 +64,7 @@ const getEntries = async forceRefetch => {
   return entries;
 };
 
-const getNamedCols = async forceRefetch => {
+const getNamedCols = async (forceRefetch) => {
   const now = new Date();
 
   if (
@@ -152,7 +148,9 @@ const resolvers = {
     async isValidCode(_, { code }) {
       const entries = await getEntries();
 
-      const entry = entries.find(e => e['code'] === code.trim().toLowerCase());
+      const entry = entries.find(
+        (e) => e['code'] === code.trim().toLowerCase(),
+      );
 
       // await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -161,7 +159,9 @@ const resolvers = {
     async greeting(_, { code }) {
       const entries = await getEntries();
 
-      const entry = entries.find(e => e['code'] === code.trim().toLowerCase());
+      const entry = entries.find(
+        (e) => e['code'] === code.trim().toLowerCase(),
+      );
 
       if (entry) return entry['begruessung'];
       return '';
@@ -171,7 +171,9 @@ const resolvers = {
     async register(_, { code, input }, context) {
       const entries = await getEntries();
 
-      const entry = entries.find(e => e['code'] === code.trim().toLowerCase());
+      const entry = entries.find(
+        (e) => e['code'] === code.trim().toLowerCase(),
+      );
 
       if (!entry || entry['timestamp']) return false;
 
@@ -209,7 +211,7 @@ const schema = makeExecutableSchema({
 
 const apolloServer = new ApolloServer({
   schema,
-  formatError: error => {
+  formatError: (error) => {
     console.log(error);
     return error;
   },
